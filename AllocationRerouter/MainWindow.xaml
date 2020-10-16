@@ -1,0 +1,266 @@
+﻿<Window x:Name="AppWindow" x:Class="AllocationRerouter.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:AllocationRerouter"
+        mc:Ignorable="d"
+        d:DesignHeight="450" d:DesignWidth="800" Activated="AppWindow_Activated" Icon="mapping.ico" Title="Allocation Re-mapper">
+    <Window.Resources>
+        <Style BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" TargetType="Button"/>
+        <local:ProgressBarColourConverter x:Key="ProgressBarColourConverter"/>
+
+        <Viewbox x:Key="Plus" x:Shared="False">
+            <Canvas Width="448" Height="448">
+                <Path Fill="{Binding Source={x:Static local:GlobalState.State}, Path=IdleButtonIconColour}" Data="M416,208L272,208 272,64C272,46.33,257.67,32,240,32L208,32C190.33,32,176,46.33,176,64L176,208 32,208C14.33,208,0,222.33,0,240L0,272C0,289.67,14.33,304,32,304L176,304 176,448C176,465.67,190.33,480,208,480L240,480C257.67,480,272,465.67,272,448L272,304 416,304C433.67,304,448,289.67,448,272L448,240C448,222.33,433.67,208,416,208z" Stretch="Uniform"/>
+            </Canvas>
+        </Viewbox>
+
+        <Viewbox x:Key="Rocket" x:Shared="False">
+            <Canvas Width="512" Height="512">
+                <Path Fill="{Binding Source={x:Static local:GlobalState.State}, Path=IdleButtonIconColour}" Data="M505.12019,19.09375C503.93074,13.5625 498.462,8.09375 492.91319,6.90625 460.716,0 435.507,0 410.40747,0 307.17523,0 245.26909,55.20312 199.05238,128L94.83772,128C78.49009,128.01562,59.28114,139.875,51.95108,154.48438L2.51562,253.29688A28.4,28.4,0,0,0,0,264A24.00867,24.00867,0,0,0,24.00582,288L127.81618,288 105.34161,310.46875C93.9764,321.83008,92.34554,342.72656,105.34161,355.71875L156.24582,406.625C167.40205,417.8125,188.40201,419.78125,201.52308,406.625L223.99765,384.15625 223.99765,488A24.00867,24.00867,0,0,0,248.00346,512A28.55934,28.55934,0,0,0,258.71046,509.48438L357.4388,460.09375C372.06768,452.79688,383.94656,433.59375,383.94656,417.23438L383.94656,312.79688C456.54409,266.48438 511.98149,204.39062 511.98149,101.70312 512.07526,76.5 512.07526,51.29688 505.12019,19.09375z M384.04033,168A40,40,0,1,1,424.05,128A40.02322,40.02322,0,0,1,384.04033,168z" Stretch="Uniform"/>
+            </Canvas>
+        </Viewbox>
+
+        <Viewbox x:Key="Trash" x:Shared="False">
+            <Canvas Width="448" Height="512">
+                <Path Fill="{Binding Source={x:Static local:GlobalState.State}, Path=IdleButtonIconColour}" Data="M268,416L292,416A12,12,0,0,0,304,404L304,188A12,12,0,0,0,292,176L268,176A12,12,0,0,0,256,188L256,404A12,12,0,0,0,268,416z M432,80L349.59,80 315.59,23.3A48,48,0,0,0,274.41,0L173.59,0A48,48,0,0,0,132.43,23.3L98.41,80 16,80A16,16,0,0,0,0,96L0,112A16,16,0,0,0,16,128L32,128 32,464A48,48,0,0,0,80,512L368,512A48,48,0,0,0,416,464L416,128 432,128A16,16,0,0,0,448,112L448,96A16,16,0,0,0,432,80z M171.84,50.91A6,6,0,0,1,177,48L271,48A6,6,0,0,1,276.15,50.91L293.61,80 154.39,80z M368,464L80,464 80,128 368,128z M156,416L180,416A12,12,0,0,0,192,404L192,188A12,12,0,0,0,180,176L156,176A12,12,0,0,0,144,188L144,404A12,12,0,0,0,156,416z" Stretch="Uniform"/>
+            </Canvas>
+        </Viewbox>
+
+        <Viewbox x:Key="Back" x:Shared="False">
+            <Canvas Width="206.688" Height="320.100">
+                <Path Fill="{Binding Source={x:Static local:GlobalState.State}, Path=IdleButtonIconColour}" Data="M31.7,239L167.7,103C177.1,93.6,192.3,93.6,201.6,103L224.2,125.6C233.6,135,233.6,150.2,224.2,159.5L127.9,256 224.3,352.4C233.7,361.8,233.7,377,224.3,386.3L201.7,409C192.3,418.4,177.1,418.4,167.8,409L31.8,273C22.3,263.6,22.3,248.4,31.7,239z" Stretch="Uniform"/>
+            </Canvas>
+        </Viewbox>
+
+        <Viewbox x:Key="Help" x:Shared="False">
+            <Canvas Width="496" Height="496">
+                <Path Fill="{Binding Source={x:Static local:GlobalState.State}, Path=IdleButtonIconColour}" Stretch="Uniform" Data="M256,8C119.043,8 8,119.083 8,256 8,392.997 119.043,504 256,504 392.957,504 504,392.997 504,256 504,119.083 392.957,8 256,8z M256,456C145.468,456 56,366.569 56,256 56,145.505 145.472,56 256,56 366.491,56 456,145.471 456,256 456,366.53 366.569,456 256,456z M363.244,200.8C363.244,267.852,290.823,268.884,290.823,293.663L290.823,300C290.823,306.627,285.45,312,278.823,312L233.176,312C226.549,312,221.176,306.627,221.176,300L221.176,291.341C221.176,255.596 248.276,241.307 268.755,229.825 286.316,219.98 297.079,213.284 297.079,200.246 297.079,183 275.08,171.553 257.295,171.553 234.106,171.553 223.401,182.53 208.353,201.522 204.296,206.642 196.893,207.593 191.687,203.646L163.863,182.548C158.756,178.676 157.612,171.482 161.219,166.185 184.846,131.491 214.94,112 261.794,112 310.865,112 363.244,150.304 363.244,200.8z M298,368C298,391.159 279.159,410 256,410 232.841,410 214,391.159 214,368 214,344.841 232.841,326 256,326 279.159,326 298,344.841 298,368z"/>
+            </Canvas>
+        </Viewbox>
+    </Window.Resources>
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo
+            ProgressValue="{Binding Source={x:Static local:ProgressTracker.Progress}, Path=NormalisedValue}"
+            ProgressState="{Binding Source={x:Static local:ProgressTracker.Progress}, Path=State}"/>
+    </Window.TaskbarItemInfo>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="131*"/>
+            <ColumnDefinition Width="265*"/>
+            <ColumnDefinition Width="396*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Visibility="{Binding Source={x:Static local:GlobalState.State}, Path=StatsVisibility}" Grid.ColumnSpan="3" Grid.RowSpan="2"
+              DataContext="{Binding Source={x:Static local:MappingStats.Stats}}">
+
+            <Button Height="40" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="40" Click="BackButton_Click"
+                    IsEnabled="{Binding Source={x:Static local:GlobalState.State}, Path=Idle}"
+                    Content="{StaticResource Back}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
+
+            <Grid Margin="10" HorizontalAlignment="Center" Width="Auto" Height="Auto" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Total flow count" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,0,0,20" Grid.Column="1"/>
+                <Label FontStyle="Italic" Content="{Binding Flows}" HorizontalAlignment="Right" VerticalAlignment="Top" />
+
+                <Label Content="Flows with identified parts" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1"/>
+                <Label FontStyle="Italic" Content="{Binding FlowsWithIdentifiedParts}" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="1" />
+
+                <Label Content="Flows with unidentified parts" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="2" Margin="0,0,0,20" Grid.Column="1"/>
+                <Label FontStyle="Italic" Content="{Binding FlowsWithUnidentifiedParts}" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="2" />
+
+                <Label Content="Flows with updated parts" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="3" Grid.Column="1"/>
+                <Label FontStyle="Italic" Content="{Binding FlowsWithSingleMatch}" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="3" />
+
+                <Label Content="Flows with unchanged parts" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="4" Grid.Column="1"/>
+                <Label FontStyle="Italic" Content="{Binding FlowsWithUnchangedPartIds}" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="4" />
+
+                <Label Content="Flows with no matched parts" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="5" Grid.Column="1"/>
+                <Label FontStyle="Italic" Content="{Binding FlowsWithNoMatches}" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="5" />
+
+                <Label Content="Flows with multiple matched parts" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Row="6" Grid.Column="1"/>
+                <Label FontStyle="Italic" Content="{Binding FlowsWithMultipleMatches}" HorizontalAlignment="Right" VerticalAlignment="Top" Grid.Row="6" />
+            </Grid>
+        </Grid>
+
+        <Grid Visibility="{Binding Source={x:Static local:GlobalState.State}, Path=ProgressBarVisibility}" Grid.Row="2" Grid.ColumnSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Height="40" Width="40" x:Name="GoButton" Content="{StaticResource Rocket}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Column="1" Margin="10" VerticalAlignment="Center" Click="GoButton_Click"
+                    IsEnabled="{Binding Source={x:Static local:GlobalState.State}, Path=Idle}"/>
+            <ProgressBar x:Name="progressBar" Height="10" Margin="10,0,0,0" VerticalAlignment="Center"
+                         Maximum="{Binding Source={x:Static local:ProgressTracker.Progress}, Path=Max}"
+                         Value="{Binding Source={x:Static local:ProgressTracker.Progress}, Path=Value}">
+                <ProgressBar.Foreground>
+                    <MultiBinding Converter="{StaticResource ProgressBarColourConverter}">
+                        <Binding Source="{x:Static local:ProgressTracker.Progress}" Path="State"/>
+                        <Binding ElementName="referenceProgressBar" Path="Foreground"/>
+                    </MultiBinding>
+                </ProgressBar.Foreground>
+            </ProgressBar>
+            <ProgressBar x:Name="referenceProgressBar" Visibility="Collapsed" />
+        </Grid>
+
+        <Grid Visibility="{Binding Source={x:Static local:GlobalState.State}, Path=InputsVisibility}" Margin="5,0,5,0" Grid.ColumnSpan="3">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Grid Height="Auto" VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="BrowseOperations" Height="25" Width="25" Margin="10" Content="{StaticResource Plus}" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"  Click="Browse_Click"
+                        IsEnabled="{Binding Source={x:Static local:GlobalState.State}, Path=Idle}"/>
+                    <Label Content="Operations" Grid.Column="1" VerticalAlignment="Center" FontSize="16"/>
+                </Grid>
+
+                <Button Grid.Column="1" x:Name="GetHelp" Height="40" Width="40" Margin="10" Content="{StaticResource Help}" HorizontalAlignment="Right" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"  Click="GetHelp_Click"
+                        IsEnabled="{Binding Source={x:Static local:GlobalState.State}, Path=Idle}"/>
+            </Grid>
+            <ListView x:Name="OperationsList" Grid.Row="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Width="20" Height="20" Content="{StaticResource Trash}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="10" VerticalAlignment="Center" Click="DeleteButton_Click"
+                                    Tag="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}}"
+                                    IsEnabled="{Binding Source={x:Static local:GlobalState.State}, Path=Idle}"/>
+                            <Label Grid.Column="1" VerticalAlignment="Center" Content="{Binding}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid Visibility="{Binding Source={x:Static local:GlobalState.State}, Path=InputsVisibility}" Grid.Row="1" Margin="5,0,2,0" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="BrowseOldEBOMs" Height="25" Width="25" Margin="10" Content="{StaticResource Plus}" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Click="Browse_Click"
+                        IsEnabled="{Binding Source={x:Static local:GlobalState.State}, Path=Idle}"/>
+                <Label Content="Old EBOMs" Grid.Column="1" VerticalAlignment="Center" FontSize="16"/>
+            </Grid>
+            <ListView x:Name="OldEBOMList" Grid.Row="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Width="20" Height="20" Content="{StaticResource Trash}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="10" VerticalAlignment="Center" Click="DeleteButton_Click"
+                                    Tag="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}}"
+                                    IsEnabled="{Binding Source={x:Static local:GlobalState.State}, Path=Idle}"/>
+                            <Label Grid.Column="1" VerticalAlignment="Center" Content="{Binding}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid Visibility="{Binding Source={x:Static local:GlobalState.State}, Path=InputsVisibility}" Grid.Column="2" Grid.Row="1"  Margin="2,0,5,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="BrowseNewEBOMs" Height="25" Width="25" Margin="10" Content="{StaticResource Plus}" HorizontalAlignment="Left" VerticalAlignment="Center" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Click="Browse_Click"
+                        IsEnabled="{Binding Source={x:Static local:GlobalState.State}, Path=Idle}"/>
+                <Label Content="New EBOMs" Grid.Column="1" VerticalAlignment="Center" FontSize="16"/>
+            </Grid>
+            <ListView x:Name="NewEBOMList" Grid.Row="1">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Width="20" Height="20" Content="{StaticResource Trash}" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="10" VerticalAlignment="Center" Click="DeleteButton_Click"
+                                    Tag="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListView}}}"
+                                    IsEnabled="{Binding Source={x:Static local:GlobalState.State}, Path=Idle}"/>
+                            <Label Grid.Column="1" VerticalAlignment="Center" Content="{Binding}"/>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid Visibility="{Binding Source={x:Static local:GlobalState.State}, Path=HelpVisibility}" Grid.ColumnSpan="3" Grid.RowSpan="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Height="40" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Width="40" Click="BackButton_Click"
+                    Content="{StaticResource Back}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch"/>
+
+            <ListView SelectedIndex="0" BorderThickness="0" x:Name="booksListView" Margin="10,55,0,10" FlowDirection="RightToLeft" ItemsSource="{Binding Source={x:Static local:HelpData.Books}}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel FlowDirection="LeftToRight"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Label FontSize="18" Content="{Binding Title}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <ListView BorderThickness="0" Grid.Column="1" ItemsSource="{Binding ElementName=booksListView, Path=SelectedItem.Chapters}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.CanContentScroll="False">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Margin="10,0,10,10">
+                            <TextBlock Text="{Binding Title}" FontSize="18" Visibility="{Binding TitleVisibility}" Padding="0,10,0,0" HorizontalAlignment="Left" TextWrapping="Wrap"/>
+                            <TextBlock MaxWidth="540" Text="{Binding Paragraph}" FontSize="14" Visibility="{Binding ParagraphVisibility}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,5,0,0"/>
+                            <Image MaxHeight="{Binding ImageHeight}" MaxWidth="{Binding ImageWidth}" Source="{Binding WPFImage}" Visibility="{Binding WPFImageVisibility}" Margin="0,5,0,0" VerticalAlignment="Top"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+    </Grid>
+</Window>
